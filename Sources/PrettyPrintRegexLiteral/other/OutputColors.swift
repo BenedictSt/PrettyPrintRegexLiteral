@@ -31,3 +31,7 @@ fileprivate func + (left: ANSIColors, right: String) -> String {
 func printInColor(_ str: String, color: ANSIColors){
     print(color.rawValue + str + ANSIColors.default.rawValue)
 }
+
+extension String: LocalizedError {
+    public var errorDescription: String? { return self }
+}
