@@ -32,7 +32,8 @@ struct PrettyPrintRegexLiteral: ParsableCommand {
                 startingBlocks.append(currentPosition)
             case ")":
                 guard let startIndex = startingBlocks.popLast() else{
-                    throw "Too many closing Paranthesis"
+					printInColor("Error: too many closing parenthesis", color: .red)
+					return
                 }
                 let whiteSpaces = Array(repeating: " ", count: 12 + startIndex).joined()
                 let dashes = Array(repeating: "-", count: currentPosition - startIndex).joined()
@@ -50,6 +51,9 @@ struct PrettyPrintRegexLiteral: ParsableCommand {
         for line in linesToPrint.reversed(){
             print(line)
         }
+		if(!startingBlocks.isEmpty){
+			printInColor("Warning: not all parenthesis closed", color: .yellow)
+		}
     }
 }
 
