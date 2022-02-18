@@ -18,6 +18,7 @@ class PrettyPrinter{
 	var startingBlocks: [(startingChar: String, index: Int)] = []
 	var currentPosition = 0
 	var closingElementMatches: String = ""
+	var state = 0
 	
 	init(input: String){
 		var tmpLiteral = input
@@ -34,16 +35,19 @@ class PrettyPrinter{
 	
 	///Generates the output lines
 	private func generateLines(){
-		var state = 0
 		
 		for currentChar in literal{
 			switch currentChar {
 			case "(":
+				if(state > 0){
+					addLine()
+				}
 				startingBlocks.append(("(", currentPosition))
-				state = 0
 			case "[":
+				if(state > 0){
+					addLine()
+				}
 				startingBlocks.append(("[", currentPosition))
-				state = 0
 			case ")":
 				closingElementMatches = "("
 				if(state > 0){
@@ -71,7 +75,6 @@ class PrettyPrinter{
 			default:
 				if(state > 0){
 					addLine()
-					state = 0
 				}
 				break
 			}
@@ -100,6 +103,7 @@ class PrettyPrinter{
 		let text = literal.dropFirst(startIndex).dropLast(literal.count - currentPosition)
 		
 		linesToPrint.append("//\(whiteSpaces)^\(dashes)\(whiteBeforeDescription)> \(text)")
+		state = 0
 	}
 	
 	///Prints the generated lines and or errors/warnings out
