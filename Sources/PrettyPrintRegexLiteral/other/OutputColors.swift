@@ -35,3 +35,9 @@ func printInColor(_ str: String, color: ANSIColors){
 extension String: LocalizedError {
     public var errorDescription: String? { return self }
 }
+
+extension String{
+	func colored(_ color: ANSIColors) -> String{
+		return color.rawValue + self + ANSIColors.default.rawValue
+	}
+}
