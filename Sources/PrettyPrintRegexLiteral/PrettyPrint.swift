@@ -9,6 +9,7 @@ import Foundation
 
 class PrettyPrinter{
 	let literal: String
+    let colored: Bool
 	
 	var linesToPrint: [String] = []
 	var messages: [String] = []
@@ -20,7 +21,7 @@ class PrettyPrinter{
 	var closingElementMatches: String = ""
 	var state = 0
 	
-	init(input: String){
+    init(input: String, colored: Bool){
 		var tmpLiteral = input
 		if(!input.hasPrefix("/")){
 			tmpLiteral = "/" + input
@@ -29,7 +30,7 @@ class PrettyPrinter{
 			tmpLiteral += "/"
 		}
 		self.literal = tmpLiteral
-		
+        self.colored = colored
 		generateLines()
 	}
 	
@@ -108,7 +109,7 @@ class PrettyPrinter{
 	
 	///Prints the generated lines and or errors/warnings out
 	public func printOut(){
-		print("let literal = \(literal)")
+        print("let literal = \(ColoredParenthesis.colorcodedLiteral(literal: literal, colored: colored))")
 		if(!failed){
 			for line in linesToPrint.reversed(){
 				print(line)
