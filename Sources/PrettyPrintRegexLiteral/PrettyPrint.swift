@@ -8,7 +8,7 @@
 import Foundation
 
 class PrettyPrinter{
-	let literal: String
+	var literal: String
     let colored: Bool
 	
 	var linesToPrint: [String] = []
@@ -22,18 +22,56 @@ class PrettyPrinter{
 	var state = 0
 	
     init(input: String, colored: Bool){
-		var tmpLiteral = input
-		if(!input.hasPrefix("/")){
-			tmpLiteral = "/" + input
-		}
-		if(!input.hasSuffix("/")){
-			tmpLiteral += "/"
-		}
-		self.literal = tmpLiteral
+        self.literal = input
         self.colored = colored
-		generateLines()
+        formatInput()
+        if(!failed){
+            generateLines()
+        }
 	}
 	
+    ///Formats the input
+    ///
+    ///Adds '/' at the beginning or ending if necessary
+    ///also checks whether the flags are valid or not
+    private func formatInput(){
+        if(!literal.hasPrefix("/")){
+            literal = "/" + literal
+        }
+        
+        let fullInputRange = NSRange(location: 0, length: literal.utf16.count)
+        let regexLiteralEndings = try! NSRegularExpression(pattern: "[^\\\\]\\/")
+        
+        let literlEndings = regexLiteralEndings.matches(in: literal, options: [], range: fullInputRange)
+        switch literlEndings.count{
+        case 0:
+            literal += "/"
+        case 1:
+            let regexFlags = try! NSRegularExpression(pattern: ".\\/[ixsmw]*$")
+            if let endRange = regexFlags.matches(in: literal, options: [], range: fullInputRange).last?.range{
+                let flags = literal.suffix(endRange.upperBound - endRange.lowerBound - 2)
+                //Check if one flag is set multiple times
+                var flagsDict: [Character : Int] = [:]
+                for flag in flags{
+                    flagsDict[flag, default: 0] += 1
+                }
+                for flagEntry in flagsDict{
+                    if(flagEntry.value > 1){
+                        messages.append("Warning: flag '\(flagEntry.key)' appeared \(flagEntry.value) times".colored(.yellow))//TODO: show flags
+                    }
+                }
+                
+            }else{
+                failed = true
+                let flags = literal.suffix(literal.count - literlEndings.last!.range.upperBound)
+                messages.append("Error: invalid flags: \(flags)".colored(.red))
+            }
+        default:
+            failed = true
+            messages.append("Error: too many closing symbols".colored(.red))
+        }
+    }
+    
 	///Generates the output lines
 	private func generateLines(){
 		
