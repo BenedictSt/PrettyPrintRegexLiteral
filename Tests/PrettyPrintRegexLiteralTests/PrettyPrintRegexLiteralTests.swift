@@ -57,9 +57,9 @@ final class PrettyPrintRegexLiteralTests: XCTestCase {
 						"""),
 			("/a(b)(cd(ef))g/", """
 								let literal = /a(b)(cd(ef))g/
+								//              ^--           > (b)
 								//                 ^-------   > (cd(ef))
-								//                    ^---    > (ef)
-								//              ^--           > (b)\n
+								//                    ^---    > (ef)\n
 								""")
 		]
 		let fooBinary = productsDirectory.appendingPathComponent("PrettyPrintRegexLiteral")
@@ -100,11 +100,11 @@ final class PrettyPrintRegexLiteralTests: XCTestCase {
                         //              ^--      > ()*\n
                         """),
             ("/a(b)??(cd(ef))a??g/", """
-                                let literal = /a(b)??(cd(ef))a??g/
-                                //                   ^-------      > (cd(ef))
-                                //                      ^---       > (ef)
-                                //              ^----              > (b)??\n
-                                """)
+								let literal = /a(b)??(cd(ef))a??g/
+								//              ^----              > (b)??
+								//                   ^-------      > (cd(ef))
+								//                      ^---       > (ef)\n
+								""")
         ]
         let fooBinary = productsDirectory.appendingPathComponent("PrettyPrintRegexLiteral")
         for test in inputOutput{
@@ -117,7 +117,6 @@ final class PrettyPrintRegexLiteralTests: XCTestCase {
             process.waitUntilExit()
             let data = pipe.fileHandleForReading.readDataToEndOfFile()
             let output = String(data: data, encoding: .utf8)
-            print(output)
             XCTAssertEqual(output, test.out, "failed at: \(test.in)")
         }
         #endif

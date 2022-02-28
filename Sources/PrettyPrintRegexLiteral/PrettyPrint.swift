@@ -11,7 +11,7 @@ class PrettyPrinter{
 	var literal: String
     let colored: Bool
 	
-	var linesToPrint: [String] = []
+	var linesToPrint: [(index: Int, message: String)] = []
 	var messages: [String] = []
 	var failed = false
 	
@@ -141,7 +141,7 @@ class PrettyPrinter{
 		let whiteBeforeDescription = Array(repeating: " ", count: (literal.count) - (currentPosition - 1)).joined()
 		let text = literal.dropFirst(startIndex).dropLast(literal.count - currentPosition)
 		
-		linesToPrint.append("//\(whiteSpaces)^\(dashes)\(whiteBeforeDescription)> \(text)")
+		linesToPrint.append((index: startIndex, message: "//\(whiteSpaces)^\(dashes)\(whiteBeforeDescription)> \(text)"))
 		state = 0
 	}
 	
@@ -149,8 +149,8 @@ class PrettyPrinter{
 	public func printOut(){
         print("let literal = \(ColoredParenthesis.colorcodedLiteral(literal: literal, colored: colored))")
 		if(!failed){
-			for line in linesToPrint.reversed(){
-				print(line)
+			for line in linesToPrint.sorted(by: {$0.index < $1.index}){
+				print(line.message)
 			}
 		}
 		for message in messages{
