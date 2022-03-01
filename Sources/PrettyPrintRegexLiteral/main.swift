@@ -10,9 +10,6 @@ struct PrettyPrintRegexLiteral: ParsableCommand {
     @Argument(help: "literal")
     private var literal: String
     
-//    @Flag(name: .short, inversion: "c", exclusivity: "abc", help: "Need to work on")
-//    private var colored: Bool
-    
     @Flag(name: [.short, .long], help: "Colorcode matching parenthesis")
     var colored = false
     
