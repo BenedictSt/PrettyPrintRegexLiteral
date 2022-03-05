@@ -124,6 +124,7 @@ class PrettyPrinter{
 		}
 	}
 	
+    //Generates and adds a line to the output lines
 	private func addLine(){
 		let top = startingBlocks.popLast()
 		guard let startIndex = top?.index else{
